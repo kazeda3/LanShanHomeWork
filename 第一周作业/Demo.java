@@ -19,83 +19,59 @@ import java.util.Scanner;
 public class Demo {
     public static void main(String[] args) {
         Lost[] lost = new Lost[4];
-        CardLost cl1 = new CardLost("二教三楼","二教失物招领处","2022-07-01 14:00:00","张三",2021214232,"软件工程");
-        CardLost cl2 = new CardLost("三教三楼","三教失物招领处","2022-07-02 15:30:00","李四",2021214232,"软件工程");
+        CardLost cl1 = new CardLost("二教三楼", "二教失物招领处", "2022-07-01 14:00:00", "张三", 2021214232, "软件工程");
+        CardLost cl2 = new CardLost("三教三楼", "三教失物招领处", "2022-07-02 15:30:00", "李四", 2021214232, "软件工程");
         lost[0] = cl1;
         lost[2] = cl2;
-        BookLost bl1 = new BookLost("二教一楼","二教失物招领","2022-07-04 08:30:00","高等数学");
-        BookLost bl2 = new BookLost("二教二楼","原位自取","2022-07-03 15:30:00","大学物理");
+        BookLost bl1 = new BookLost("二教一楼", "二教失物招领", "2022-07-04 08:30:00", "高等数学");
+        BookLost bl2 = new BookLost("二教二楼", "原位自取", "2022-07-03 15:30:00", "大学物理");
         lost[1] = bl1;
         lost[3] = bl2;
         sortLost(lost);
         System.out.println("是否进行关键字查找(是/否）");
         Scanner sc = new Scanner(System.in);
         String s = sc.next();
-        if(s.equals("是")){
+        if (s.equals("是")) {
             System.out.println("请输入关键字");
             String key = sc.next();
-            selectByKeyword(lost,key);
+            selectByKeyword(lost, key);
         }
     }
 
-    public static void sortLost(Lost[] lost){//失物按丢失时间排序
+    public static void sortLost(Lost[] lost) {//失物按丢失时间排序
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for(int i = 0;i<lost.length-1;i++){//冒泡排序
-            for(int j = 0;j<lost.length-i-1;j++){
+        for (int i = 0; i < lost.length - 1; i++) {//冒泡排序
+            for (int j = 0; j < lost.length - i - 1; j++) {
                 try {
-                    if (sdf.parse(lost[j].getsDate()).getTime() < sdf.parse(lost[j+1].getsDate()).getTime()) {
+                    if (sdf.parse(lost[j].getsDate()).getTime() < sdf.parse(lost[j + 1].getsDate()).getTime()) {
                         Lost temp;
                         temp = lost[j];
-                        lost[j] = lost[j+1];
-                        lost[j+1] = temp;
+                        lost[j] = lost[j + 1];
+                        lost[j + 1] = temp;
                     }
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
             }
         }
-        for(int i = 0;i<lost.length;i++){
+        for (int i = 0; i < lost.length; i++) {
             lost[i].show();
         }
     }
-    public static void selectByKeyword(Lost[] lost,String key){//按关键字搜索失物
-        int keylength = key.length();
-        for(int i = 0;i<lost.length;i++) {
-            for (int j = 0;j<lost[i].getsDate().length();) {
-                if ((keylength + j) <= lost[i].getsDate().length()
-                        && lost[i].getsDate().substring(j, keylength + j).equals(key)) {
+
+    public static void selectByKeyword(Lost[] lost, String key) {//按关键字搜索失物
+        for (int i = 0; i < lost.length; i++) {
+            if (lost[i].getsDate().contains(key) || lost[i].getClaimPlace().contains(key)
+                    || lost[i].getLostPlace().contains(key)) {
+                lost[i].show();
+            } else if (lost[i] instanceof CardLost) {
+                if (((CardLost) lost[i]).getName().contains(key) ||
+                        ((CardLost) lost[i]).getCollege().contains(key)) {
                     lost[i].show();
-                    break;
-                } else if ((keylength + j) <= lost[i].getClaimPlace().length()
-                        && lost[i].getClaimPlace().substring(j, keylength + j).equals(key)) {
+                }
+            } else if (lost[i] instanceof BookLost) {
+                if (((BookLost) lost[i]).getBookName().contains(key)) {
                     lost[i].show();
-                    break;
-                } else if ((keylength + j) <= lost[i].getLostPlace().length()
-                        && lost[i].getLostPlace().substring(j, keylength + j).equals(key)) {
-                    lost[i].show();
-                    break;
-                } else if(lost[i] instanceof CardLost){
-                    if((keylength + j) <= ((CardLost)lost[i]).getName().length()
-                            && ((CardLost)lost[i]).getName().substring(j, keylength + j).equals(key)){
-                        lost[i].show();
-                        break;
-                    }else if((keylength + j) <= ((CardLost)lost[i]).getCollege().length()
-                            && ((CardLost)lost[i]).getCollege().substring(j, keylength + j).equals(key)){
-                        lost[i].show();
-                        break;
-                    }else {
-                        j++;
-                    }
-                } else if(lost[i] instanceof BookLost){
-                    if((keylength + j) <= ((BookLost)lost[i]).getBookName().length()
-                            && ((BookLost)lost[i]).getBookName().substring(j, keylength + j).equals(key)){
-                        lost[i].show();
-                        break;
-                    }else{
-                        j++;
-                    }
-                }else {
-                    j++;
                 }
             }
         }
