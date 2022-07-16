@@ -11,6 +11,7 @@ package 蓝山作业.第一周作业;
  */
 
 import java.awt.print.Book;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
@@ -39,33 +40,22 @@ public class Demo {
 
     public static void sortLost(Lost[] lost){//失物按丢失时间排序
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date[] dates = new Date[4];
-        for(int i = 0;i<lost.length;i++){//将String类型的日期转换成Date类型
-            try {
-                dates[i]= sdf.parse(lost[i].getsDate());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         for(int i = 0;i<lost.length-1;i++){//冒泡排序
             for(int j = 0;j<lost.length-i-1;j++){
-                if (dates[j].getTime() < dates[j+1].getTime()) {
-                    Date temp;
-                    temp  = dates[j];
-                    dates[j] = dates[j+1];
-                    dates[j+1] = temp;
+                try {
+                    if (sdf.parse(lost[j].getsDate()).getTime() < sdf.parse(lost[j+1].getsDate()).getTime()) {
+                        Lost temp;
+                        temp = lost[j];
+                        lost[j] = lost[j+1];
+                        lost[j+1] = temp;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
             }
         }
-        for(int i = 0;i<lost.length;i++){//将Date类型的日期转换成String类型
-            try {
-                lost[i].setsDate(sdf.format(dates[i]));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         for(int i = 0;i<lost.length;i++){
-             lost[i].show();
+            lost[i].show();
         }
     }
     public static void selectByKeyword(Lost[] lost,String key){//按关键字搜索失物
